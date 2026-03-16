@@ -1,548 +1,987 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Okanlawon Muyiwa Raphael - Portfolio</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LinkGuard — URL Safety Checker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #f4f4f4;
-        }
+    :root {
+      --bg: #060a0f;
+      --surface: #0d1520;
+      --surface2: #111d2e;
+      --border: rgba(255,255,255,0.07);
+      --accent: #00e5a0;
+      --accent2: #0096ff;
+      --danger: #ff4560;
+      --warn: #ffb830;
+      --safe: #00e5a0;
+      --text: #dde8f0;
+      --muted: #5a7a90;
+      --font-display: 'Syne', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
 
-        header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            color: white;
-            padding: 3rem 0;
-            text-align: center;
-        }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        header h1 {
-            margin-bottom: 0.5rem;
-            font-size: 2.5rem;
-        }
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        header p {
-            color: #ecf0f1;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px; left: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(0,150,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
 
-        .header-contact {
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
+    @keyframes drift {
+      to { transform: translate(300px, 200px); }
+    }
 
-        .container {
-            max-width: 1100px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
 
-        .section {
-            background: white;
-            margin-bottom: 2rem;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+    /* HEADER */
+    header {
+      padding: 52px 0 40px;
+      text-align: center;
+    }
 
-        .section h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid #3498db;
-            font-size: 1.8rem;
-        }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.2);
+      border-radius: 100px;
+      padding: 6px 18px 6px 10px;
+      margin-bottom: 28px;
+      animation: fadeDown 0.6s ease both;
+    }
 
-        .about-text {
-            color: #555;
-            line-height: 1.8;
-            font-size: 1.05rem;
-        }
+    .logo-badge .dot {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
 
-        .project {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #eee;
-        }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
 
-        .project:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
+    .logo-badge span {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-        .project h3 {
-            color: #34495e;
-            margin-bottom: 1rem;
-            font-size: 1.4rem;
-        }
+    h1 {
+      font-size: clamp(36px, 7vw, 58px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      animation: fadeDown 0.6s 0.1s ease both;
+    }
 
-        .project-description {
-            color: #666;
-            margin-bottom: 1rem;
-            line-height: 1.7;
-        }
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
 
-        .project-image {
-            width: 100%;
-            max-width: 800px;
-            max-height: 500px;
-            height: auto;
-            object-fit: contain;
-            border-radius: 8px;
-            margin-top: 1rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border: 1px solid #ddd;
-            display: block;
-            background: #f8f9fa;
-        }
+    .subtitle {
+      margin-top: 14px;
+      font-size: 15px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      animation: fadeDown 0.6s 0.2s ease both;
+    }
 
-        .image-placeholder {
-            width: 100%;
-            max-width: 700px;
-            height: 400px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            margin-top: 1rem;
-            text-align: center;
-            padding: 2rem;
-        }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
+    /* INPUT AREA */
+    .input-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
 
-        .skill-category {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border-left: 4px solid #3498db;
-        }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        .skill-category h3 {
-            color: #2c3e50;
-            margin-bottom: 0.8rem;
-            font-size: 1.1rem;
-        }
+    .input-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: block;
+    }
 
-        .skill-category ul {
-            list-style: none;
-        }
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: stretch;
+    }
 
-        .skill-category li {
-            color: #555;
-            padding: 0.3rem 0;
-            font-size: 0.95rem;
-        }
+    .url-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
 
-        .skill-category li:before {
-            content: "▸ ";
-            color: #3498db;
-            font-weight: bold;
-        }
+    .url-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,160,0.1);
+    }
 
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
+    .url-input::placeholder { color: var(--muted); }
 
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
+    .scan-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+    }
 
-        .contact-item a {
-            color: #3498db;
-            text-decoration: none;
-            word-break: break-all;
-        }
+    .scan-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,229,160,0.3);
+    }
 
-        .contact-item a:hover {
-            text-decoration: underline;
-        }
+    .scan-btn:active { transform: translateY(0); }
 
-        footer {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-            background: white;
-            margin-top: 2rem;
-        }
-#certificates {
-    margin-top: 50px;
-}
-.certificate-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-.certificate {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.certificate h3 {
-    margin-bottom: 10px;
-}
-.certificate p {
-    margin-bottom: 15px;
-}
-.image-placeholder {
-    width: 100%;
-    max-width: 700px;
-    height: auto; /* Changed: Auto-adjust to image height */
-    background: linear-gradient(135deg, #6a1b9a, #9c27b0); /* Kept, but won't show if image fills */
-    border-radius: 8px;
-    overflow: hidden;
-    margin-top: 1rem;
-    padding: 0; /* Changed: Remove padding for snug fit */
-    /* Removed: display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; text-align: center; */
-}
-.project-image { /* Reuse your existing class */
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain; /* Keeps full image visible without cropping */
-}
-.date {
-    font-style: italic;
-    color: #555;
-    font-size: 0.9em;
-}
-        .date {
-            font-style: italic;
-            color: #555;
-            font-size: 0.9em;
-        }
+    .scan-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
+    /* SCANNING ANIMATION */
+    .scanning-state {
+      display: none;
+      text-align: center;
+      padding: 48px 0;
+    }
 
-            header p {
-                font-size: 1rem;
-            }
+    .scanner-ring {
+      width: 70px; height: 70px;
+      border: 3px solid rgba(0,229,160,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
 
-            .section {
-                padding: 1.5rem;
-            }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    .scanning-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+    }
+
+    .scan-steps {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .scan-step {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .scan-step.active { opacity: 1; color: var(--accent); }
+    .scan-step.done { opacity: 0.4; }
+
+    /* RESULTS */
+    #results { display: none; }
+
+    .verdict-banner {
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .verdict-banner.safe {
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.3);
+    }
+
+    .verdict-banner.warn {
+      background: rgba(255,184,48,0.08);
+      border: 1px solid rgba(255,184,48,0.3);
+    }
+
+    .verdict-banner.danger {
+      background: rgba(255,69,96,0.08);
+      border: 1px solid rgba(255,69,96,0.3);
+    }
+
+    .verdict-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+    }
+
+    .verdict-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .verdict-banner.safe .verdict-title { color: var(--safe); }
+    .verdict-banner.warn .verdict-title { color: var(--warn); }
+    .verdict-banner.danger .verdict-title { color: var(--danger); }
+
+    .verdict-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+
+    .risk-score-wrap {
+      margin-left: auto;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .risk-score {
+      font-size: 42px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .verdict-banner.safe .risk-score { color: var(--safe); }
+    .verdict-banner.warn .risk-score { color: var(--warn); }
+    .verdict-banner.danger .risk-score { color: var(--danger); }
+
+    .risk-label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 4px;
+    }
+
+    /* CHECKS GRID */
+    .checks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .check-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      animation: fadeUp 0.4s ease both;
+      transition: border-color 0.2s;
+    }
+
+    .check-card:hover { border-color: rgba(255,255,255,0.14); }
+
+    .check-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .check-name {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    .check-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+    }
+
+    .check-badge.pass { background: rgba(0,229,160,0.15); color: var(--safe); }
+    .check-badge.warn { background: rgba(255,184,48,0.15); color: var(--warn); }
+    .check-badge.fail { background: rgba(255,69,96,0.15); color: var(--danger); }
+    .check-badge.info { background: rgba(0,150,255,0.15); color: var(--accent2); }
+
+    .check-value {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      word-break: break-all;
+    }
+
+    .check-detail {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* URL BREAKDOWN */
+    .breakdown-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.4s 0.1s ease both;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .url-breakdown {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      background: var(--bg);
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      word-break: break-all;
+      line-height: 1.8;
+    }
+
+    .url-part { display: inline; }
+    .url-part.scheme { color: var(--accent2); }
+    .url-part.host { color: var(--accent); font-weight: 600; }
+    .url-part.path { color: #b0c4d8; }
+    .url-part.params { color: var(--warn); }
+    .url-part.fragment { color: #a088cc; }
+
+    .url-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+    }
+
+    /* THREAT FLAGS */
+    .flags-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.4s 0.15s ease both;
+    }
+
+    .flag-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .flag-item:last-child { border-bottom: none; }
+
+    .flag-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .flag-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .flag-desc {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .flag-severity {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+    }
+
+    .flag-severity.high { background: rgba(255,69,96,0.2); color: var(--danger); }
+    .flag-severity.medium { background: rgba(255,184,48,0.2); color: var(--warn); }
+    .flag-severity.low { background: rgba(0,150,255,0.2); color: var(--accent2); }
+
+    /* RECOMMENDATION */
+    .rec-card {
+      border-radius: 14px;
+      padding: 22px;
+      animation: fadeUp 0.4s 0.2s ease both;
+    }
+
+    .rec-card.safe { background: rgba(0,229,160,0.06); border: 1px solid rgba(0,229,160,0.2); }
+    .rec-card.warn { background: rgba(255,184,48,0.06); border: 1px solid rgba(255,184,48,0.2); }
+    .rec-card.danger { background: rgba(255,69,96,0.06); border: 1px solid rgba(255,69,96,0.2); }
+
+    .rec-text {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 32px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+
+    /* HOW IT WORKS */
+    .how-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .how-item {
+      text-align: center;
+      padding: 16px 10px;
+      background: var(--bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .how-item .how-icon { font-size: 22px; margin-bottom: 8px; }
+    .how-item .how-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 48px 0;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.3; }
+
+    @media (max-width: 600px) {
+      .checks-grid { grid-template-columns: 1fr; }
+      .how-grid { grid-template-columns: 1fr 1fr; }
+      .input-row { flex-direction: column; }
+      .verdict-banner { flex-direction: column; text-align: center; }
+      .risk-score-wrap { margin-left: 0; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Okanlawon Muyiwa Raphael</h1>
-        <p>Network Administrator | IT Support Specialist</p>
-        <div class="header-contact">
-            Lagos State, Nigeria | 08121814456, 09064038283
-        </div>
-    </header>
+<div class="container">
 
-    <div class="container">
-        <section class="section">
-            <h2>About Me</h2>
-            <p class="about-text">
-                A highly motivated and certified Network Administrator, recently concluded the NYSC program. Eager to leverage hands-on experience in network support, troubleshooting, and system configuration gained during my service year and academic projects. I possess a strong foundational knowledge of TCP/IP, routing, switching, and network security principles. A proactive problem-solver dedicated to maintaining network uptime and supporting end-users.
-            </p>
-        </section>
-
-        <section class="section">
-            <h3>Projects & Experience</h3>
-            
-            <div class="project">
-                <h2>Designed a Network system for an Hotel</h2>
-                <p class="project-description">
-                    Built and tested various network configurations, including static configuration, Hotel configuration, and school configuration using Cisco Packet Tracer, core switches and other cisco end devices.
-                </p>
-                <div class="image-placeholder">
-                    <img src="hotel.png" alt="Project description" class="project-image">
-                </div>
-            </div>
-
-            <div class="project">
-                <h3>Design and Stimulated VOiP</h3>
-                <p class="project-description">
-                    Designed and simulated complex network topologies, implementing advanced configurations such as VoIP (Voice over IP), and configured network segmentation using VLANs (Dot1Q). Built and tested various network configurations including static configuration, hotel configuration, and school configuration using Cisco Packet Tracer, core switches and other Cisco end devices.
-                </p>
-                <div class="image-placeholder">
-                    <img src="voip2.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="voip3.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                  <br>
-                  <br>
-                 <div class="image-placeholder">
-                    <img src="voip4.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-            </div>
-
-             <div class="image-placeholder">
-                    <img src="voip5.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="voip6.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                  <br>
-                  <br>
-                 <div class="image-placeholder">
-                    <img src="voip7.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-             <div class="project">
-                <h3>DETECTION OF CROSS-SITE SCRIPTING ATTACK USING DYNAMIC ANALYSIS AND FUZZY INFERENCE SYSTEM</h3>
-                <p class="project-description">
-                   Final year project: Collaborated with a team to create a software solution capable of tracking malware and vulnerability attacks on websites in real-time. The project was specifically designed to identify and monitor threats posed by XSS (Cross-Site Scripting) attacks, helping to protect sites from attackers.
-                </p>
-                <div class="image-placeholder">
-                    <img src="xxs1.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="xxs2.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="xxs3.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="xxs4.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="xxs5.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="xxs6.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                 <div class="image-placeholder">
-                    <img src="xxs7.png" alt="Project description" class="project-image">
-                    <br>
-                </div>
-
-                <br>
-                <br>
-                <br>
-                   <div class="project">
-                <h3>Surveillance camera installation </h3>
-                <p class="project-description">
-                  	Involved in the physical mounting and configuration of IP surveillance cameras, assigning static IPs and integrating video feeds into the central NVR server.
-                </p>
-                <br>
-                <br>
-                <br>
-             
-
-                <div class="image-placeholder">
-                    <img src="cctv1.jpg" alt="Project description" class="project-image">
-                    <br>
-                </div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-
-                 <div class="image-placeholder">
-                    <img src="cctv2.jpg" alt="Project description" class="project-image">
-                    <br>
-                </div>
-        </section>
-
-         
-
-           
-       
-       
-
-        <section class="section">
-            <h2>Technical Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-category">
-                    <h3>Networking Concepts</h3>
-                    <ul>
-                        <li>TCP/IP, LAN/WAN</li>
-                        <li>VLANs, DNS, DHCP</li>
-                        <li>Subnetting, OSPF, EIGRP</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <h3>Hardware</h3>
-                    <ul>
-                        <li>Cisco Routers (2900 series)</li>
-                        <li>Cisco Switches (Catalyst 2960)</li>
-                        <li>Firewalls (pfSense)</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <h3>Systems & Servers</h3>
-                    <ul>
-                        <li>Windows Server (2016/2019)</li>
-                        <li>Active Directory</li>
-                        <li>Linux (Ubuntu)</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <h3>Tools & Protocols</h3>
-                    <ul>
-                        <li>Wireshark, Cisco Packet Tracer</li>
-                        <li>Nmap, SSH, Telnet, RDP</li>
-                        <li>PRTG Network Monitor</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <h3>Network Security</h3>
-                    <ul>
-                        <li>Access Control Lists (ACLs)</li>
-                        <li>Firewall Configuration</li>
-                        <li>VPN Concepts</li>
-                    </ul>
-                </div>
-
-                <div class="skill-category">
-                    <h3>Practical Skills</h3>
-                    <ul>
-                        <li>Network Cabling (CAT5e/6)</li>
-                        <li>Patch Panel Termination</li>
-                        <li>IP Camera Installation</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-       <section class="section">
-    <h2>Certifications</h2>
-    <div class="certificate-grid">
-        <div class="certificate">
-            <h3>Ethical Hacker</h3>
-            <p>Completed through Cisco Networking Academy. Focuses on ethical hacking techniques, vulnerability assessment, and penetration testing fundamentals.</p>
-            <div class="image-placeholder">
-                <img src="ethcert.jpg" alt="Ethical Hacker Certificate" class="project-image">
-            </div>
-            <p class="date">Completion Date: 23 Dec 2025</p>
-        </div>
-
-        <div class="certificate">
-            <h3>Introduction to Cybersecurity</h3>
-            <p>Completed through Cisco Networking Academy. Covers basic cybersecurity concepts, threats, and protective measures.</p>
-            <div class="image-placeholder">
-                <img src="cybercert.jpg" alt="Introduction to Cybersecurity Certificate" class="project-image">
-            </div>
-            <p class="date">Completion Date: 23 Dec 2025</p>
-        </div>
-
-        <div class="certificate">
-            <h3>Networking Basics</h3>
-            <p>Completed through Cisco Networking Academy. Introduces networking fundamentals, protocols, and device configuration.</p>
-            <div class="image-placeholder">
-                <img src="Netcert.jpg" alt="Networking Basics Certificate" class="project-image">
-            </div>
-            <p class="date">Completion Date: 23 Dec 2025</p>
-        </div>
-
-        <div class="certificate">
-            <h3>Oracle Cloud Infrastructure (OCI) Networking</h3>
-            <p>In progress through Oracle.</p>
-            <p class="date">Expected Completion: Ongoing</p>
-        </div>
+  <header>
+    <div class="logo-badge">
+      <div class="dot"></div>
+      <span>Security Tool v1.0</span>
     </div>
-</section>
+    <h1>Link<em>Guard</em></h1>
+    <p class="subtitle">// URL Safety Checker — Know Before You Click</p>
+  </header>
 
-        <section class="section">
-            <h2>Education</h2>
-            <p style="color: #555; line-height: 1.8;">
-                <strong>B.Sc. (Hons) Computer Science</strong><br>
-                Lagos State University, Lagos State<br>
-                2020 - 2024<br>
-                <strong>NYSC CERTIFICATE</strong><br>
-                2024 - 2025<br>
-            </p>
-        </section>
-
-        <section class="section">
-            <h2>Contact Me</h2>
-            <div class="contact-grid">
-                <div class="contact-item">
-                    <span>📧</span>
-                    <a href="mailto:okanlawonmuyiwaraphael@gmail.com">okanlawonmuyiwaraphael@gmail.com</a>
-                </div>
-                <div class="contact-item">
-                    <span>📱</span>
-                    <span style="color: #555;">08121814456</span>
-                </div>
-                <div class="contact-item">
-                    <span>🏠</span>
-                    <span style="color: #555;"> Lagos State, Nigeria </span>
-                </div>
-            </div>
-        </section>
+  <!-- HOW IT WORKS -->
+  <div class="how-card">
+    <div class="section-title">How It Works — 5 Checks Run Instantly</div>
+    <div class="how-grid">
+      <div class="how-item">
+        <div class="how-icon">🔒</div>
+        <div class="how-label">HTTPS Check</div>
+      </div>
+      <div class="how-item">
+        <div class="how-icon">🎭</div>
+        <div class="how-label">Phishing Patterns</div>
+      </div>
+      <div class="how-item">
+        <div class="how-icon">🔗</div>
+        <div class="how-label">URL Shortener</div>
+      </div>
+      <div class="how-item">
+        <div class="how-icon">🧬</div>
+        <div class="how-label">Suspicious Structure</div>
+      </div>
     </div>
+  </div>
 
-    <footer>
-        <p>&copy; 2025 Okanlawon Muyiwa Raphael. All rights reserved.</p>
-    </footer>
+  <!-- INPUT -->
+  <div class="input-card">
+    <label class="input-label" for="urlInput">Enter URL to Analyse</label>
+    <div class="input-row">
+      <input
+        type="text"
+        id="urlInput"
+        class="url-input"
+        placeholder="https://example.com/login?redirect=..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="scan-btn" id="scanBtn" onclick="runScan()">
+        Scan URL ›
+      </button>
+    </div>
+  </div>
+
+  <!-- SCANNING STATE -->
+  <div class="scanning-state" id="scanningState">
+    <div class="scanner-ring"></div>
+    <div class="scanning-text">Analysing URL...</div>
+    <div class="scan-steps">
+      <div class="scan-step" id="step1">① Parsing URL structure...</div>
+      <div class="scan-step" id="step2">② Checking protocol & encryption...</div>
+      <div class="scan-step" id="step3">③ Scanning for phishing keywords...</div>
+      <div class="scan-step" id="step4">④ Detecting URL shorteners...</div>
+      <div class="scan-step" id="step5">⑤ Evaluating domain anomalies...</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">🛡️</div>
+    Paste a URL above and click Scan — results appear instantly.
+  </div>
+
+  <footer>
+    Built by <a href="#">Okanlawon Muyiwa Raphael</a> · LinkGuard Security Tool ·
+    <a href="https://github.com/" target="_blank">View on GitHub</a>
+  </footer>
+
+</div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────────
+const PHISHING_KEYWORDS = [
+  'login','signin','sign-in','account','verify','secure','update',
+  'confirm','banking','paypal','amazon','apple','microsoft','google',
+  'password','credential','wallet','crypto','suspended','urgent',
+  'limited','ebay','netflix','instagram','facebook','whatsapp',
+  'bank','transfer','fund','alert','unlock','access','support',
+  'helpdesk','customer','service','reset','activate'
+];
+
+const URL_SHORTENERS = [
+  'bit.ly','tinyurl.com','t.co','goo.gl','ow.ly','buff.ly',
+  'short.io','rebrand.ly','cutt.ly','tiny.cc','is.gd','v.gd',
+  'bl.ink','soo.gd','bc.vc','snip.ly'
+];
+
+const SUSPICIOUS_TLDS = [
+  '.xyz','.top','.click','.loan','.online','.site','.tk',
+  '.ml','.ga','.cf','.gq','.pw','.cc','.biz'
+];
+
+const MALICIOUS_PATTERNS = [
+  { pattern: /@/, label: 'Credential Bypass (@)', desc: 'URL contains "@" — browsers ignore everything before it. Often used to disguise the real destination.' },
+  { pattern: /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/, label: 'Raw IP Address', desc: 'URL uses a raw IP instead of a domain name — a common phishing technique to avoid detection.' },
+  { pattern: /[^\w.-][-]{2,}/, label: 'Multiple Dashes', desc: 'Excessive dashes in the domain can indicate a spoofed or lookalike domain.' },
+  { pattern: /https?:\/\/[^/]+\.[^/]+\.[^/]+\.[^/]+/, label: 'Excessive Subdomains', desc: 'More than 3 subdomains is suspicious — attackers use deep subdomains to bury the real malicious host.' },
+  { pattern: /[%]{1}[0-9a-fA-F]{2}/, label: 'URL Encoding', desc: 'URL-encoded characters can hide malicious content from security filters.' },
+  { pattern: /data:/, label: 'Data URI Scheme', desc: 'data: URIs embedded in URLs can execute HTML/JS directly — a known XSS vector.' },
+  { pattern: /javascript:/i, label: 'JavaScript Protocol', desc: 'javascript: in a URL executes code directly — this is a critical security threat.' },
+];
+
+// ─── ANALYSIS ENGINE ─────────────────────────────────────────────
+function analyseURL(rawInput) {
+  const input = rawInput.trim();
+  if (!input) return null;
+
+  let url;
+  let parseOk = true;
+
+  try {
+    // Add protocol if missing for parsing
+    const toparse = /^https?:\/\//i.test(input) ? input : 'http://' + input;
+    url = new URL(toparse);
+  } catch(e) {
+    parseOk = false;
+  }
+
+  const checks = {};
+  const flags = [];
+  let riskScore = 0;
+
+  // ── CHECK 1: HTTPS ──
+  if (!parseOk) {
+    checks.https = { status: 'fail', label: 'HTTPS', value: 'Invalid URL', detail: 'Could not parse this URL' };
+    riskScore += 30;
+  } else if (url.protocol === 'https:') {
+    checks.https = { status: 'pass', label: 'HTTPS', value: 'Encrypted (HTTPS)', detail: 'Traffic between you and the server is encrypted' };
+  } else if (url.protocol === 'http:') {
+    checks.https = { status: 'warn', label: 'HTTPS', value: 'Unencrypted (HTTP)', detail: 'Data is sent in plain text — avoid entering personal info' };
+    riskScore += 20;
+    flags.push({ icon: '⚠️', title: 'No Encryption (HTTP)', desc: 'This URL uses HTTP, meaning all data you submit can be intercepted by anyone on the network.', severity: 'medium' });
+  } else {
+    checks.https = { status: 'fail', label: 'Protocol', value: url.protocol, detail: 'Non-standard or dangerous protocol' };
+    riskScore += 40;
+  }
+
+  if (!parseOk) {
+    return { input, parseOk, checks, flags, riskScore: Math.min(riskScore, 100), parts: null };
+  }
+
+  const fullHost = url.hostname.toLowerCase();
+  const pathname = url.pathname;
+  const search = url.search;
+  const parts = {
+    scheme: url.protocol + '//',
+    host: fullHost,
+    path: pathname !== '/' ? pathname : '',
+    params: search,
+    fragment: url.hash
+  };
+
+  // ── CHECK 2: URL SHORTENER ──
+  const isShortener = URL_SHORTENERS.some(s => fullHost === s || fullHost.endsWith('.' + s));
+  if (isShortener) {
+    checks.shortener = { status: 'warn', label: 'URL Shortener', value: 'Yes — ' + fullHost, detail: 'Cannot see where this link truly leads without clicking it' };
+    riskScore += 25;
+    flags.push({ icon: '🔗', title: 'URL Shortener Detected', desc: `This link uses ${fullHost} to hide its real destination. Shortened URLs are commonly used in phishing attacks to conceal malicious sites.`, severity: 'medium' });
+  } else {
+    checks.shortener = { status: 'pass', label: 'URL Shortener', value: 'Not detected', detail: 'Destination domain is visible and readable' };
+  }
+
+  // ── CHECK 3: PHISHING KEYWORDS ──
+  const fullUrl = input.toLowerCase();
+  const foundKeywords = PHISHING_KEYWORDS.filter(k => {
+    // Check in path/params, be stricter in domain
+    return fullUrl.includes(k);
+  });
+  const keywordCount = foundKeywords.length;
+  if (keywordCount >= 3) {
+    checks.phishing = { status: 'fail', label: 'Phishing Keywords', value: `${keywordCount} suspicious words`, detail: foundKeywords.slice(0,5).join(', ') + (foundKeywords.length > 5 ? '...' : '') };
+    riskScore += 35;
+    flags.push({ icon: '🎭', title: 'Multiple Phishing Keywords', desc: `Found ${keywordCount} keywords commonly used in phishing URLs: "${foundKeywords.slice(0,4).join('", "')}" — these are designed to create urgency or trick users into entering credentials.`, severity: 'high' });
+  } else if (keywordCount >= 1) {
+    checks.phishing = { status: 'warn', label: 'Phishing Keywords', value: `${keywordCount} flagged word${keywordCount > 1 ? 's' : ''}`, detail: foundKeywords.join(', ') };
+    riskScore += 10;
+  } else {
+    checks.phishing = { status: 'pass', label: 'Phishing Keywords', value: 'None detected', detail: 'No common phishing vocabulary in URL' };
+  }
+
+  // ── CHECK 4: SUSPICIOUS TLD ──
+  const suspTLD = SUSPICIOUS_TLDS.find(t => fullHost.endsWith(t));
+  if (suspTLD) {
+    checks.tld = { status: 'warn', label: 'Domain Extension', value: suspTLD + ' (flagged)', detail: 'This top-level domain is commonly used in malicious sites' };
+    riskScore += 20;
+    flags.push({ icon: '🌐', title: 'Suspicious Domain Extension', desc: `The ${suspTLD} TLD is frequently associated with spam, phishing and malware distribution due to its low cost and weak abuse controls.`, severity: 'medium' });
+  } else {
+    const tldMatch = fullHost.match(/\.[a-z]{2,}$/);
+    checks.tld = { status: 'pass', label: 'Domain Extension', value: tldMatch ? tldMatch[0] : 'unknown', detail: 'Standard, commonly trusted domain extension' };
+  }
+
+  // ── CHECK 5: MALICIOUS PATTERNS ──
+  const foundPatterns = MALICIOUS_PATTERNS.filter(p => p.pattern.test(input));
+  if (foundPatterns.length > 0) {
+    checks.patterns = { status: 'fail', label: 'Structural Anomalies', value: `${foundPatterns.length} pattern${foundPatterns.length > 1 ? 's' : ''} detected`, detail: foundPatterns.map(p => p.label).join(', ') };
+    riskScore += foundPatterns.length * 15;
+    foundPatterns.forEach(p => {
+      flags.push({ icon: '🧬', title: p.label, desc: p.desc, severity: 'high' });
+    });
+  } else {
+    checks.patterns = { status: 'pass', label: 'Structural Anomalies', value: 'None found', detail: 'No known evasion or obfuscation patterns detected' };
+  }
+
+  // ── CHECK 6: DOMAIN LENGTH / COMPLEXITY ──
+  const domainParts = fullHost.split('.');
+  const mainDomain = domainParts.slice(-2).join('.');
+  const hasNumbers = /\d/.test(domainParts[domainParts.length - 2] || '');
+  const domainLen = fullHost.length;
+
+  if (domainLen > 40) {
+    checks.domain = { status: 'warn', label: 'Domain Length', value: `${domainLen} chars (long)`, detail: 'Very long domains are often auto-generated or designed to confuse users' };
+    riskScore += 15;
+    flags.push({ icon: '📏', title: 'Unusually Long Domain', desc: `The domain is ${domainLen} characters long. Legitimate services typically use short, memorable domains. Long domains are often machine-generated for malicious purposes.`, severity: 'medium' });
+  } else if (domainParts.length > 4) {
+    checks.domain = { status: 'warn', label: 'Domain Depth', value: `${domainParts.length} subdomains`, detail: 'Deeply nested subdomains can be used to obscure the real host' };
+    riskScore += 10;
+  } else {
+    checks.domain = { status: 'pass', label: 'Domain', value: mainDomain, detail: `${domainParts.length > 2 ? domainParts.length - 2 + ' subdomain(s), ' : ''}length ${domainLen} chars` };
+  }
+
+  // ── PARAMS CHECK ──
+  if (search && search.length > 0) {
+    const paramCount = search.split('&').length;
+    if (paramCount > 5) {
+      checks.params = { status: 'warn', label: 'Query Parameters', value: `${paramCount} parameters`, detail: 'High number of parameters — could be tracking or token injection' };
+      riskScore += 5;
+    } else {
+      checks.params = { status: 'info', label: 'Query Parameters', value: `${paramCount} parameter${paramCount > 1 ? 's' : ''}`, detail: search.length > 60 ? search.substring(0, 60) + '...' : search };
+    }
+  } else {
+    checks.params = { status: 'pass', label: 'Query Parameters', value: 'None', detail: 'Clean URL with no appended parameters' };
+  }
+
+  riskScore = Math.min(Math.round(riskScore), 100);
+  return { input, parseOk, checks, flags, riskScore, parts };
+}
+
+// ─── RENDER RESULTS ───────────────────────────────────────────────
+function renderResults(result) {
+  const { input, parseOk, checks, flags, riskScore, parts } = result;
+  const el = document.getElementById('results');
+
+  let level, levelClass, icon, verdictTitle, verdictSub, recText;
+
+  if (riskScore >= 60) {
+    level = 'DANGEROUS'; levelClass = 'danger'; icon = '🚨';
+    verdictTitle = 'High Risk — Do Not Click';
+    verdictSub = 'Multiple threat indicators detected. Avoid this URL.';
+    recText = `⛔ <strong>Do not open this URL.</strong> This link has ${flags.length} threat indicator${flags.length !== 1 ? 's' : ''} that are consistent with phishing, malware distribution, or credential harvesting. If you received this link via email, SMS, or chat — report it to your IT security team immediately. Do not enter any personal information, login credentials, or payment details on any page reached through this URL.`;
+  } else if (riskScore >= 30) {
+    level = 'SUSPICIOUS'; levelClass = 'warn'; icon = '⚠️';
+    verdictTitle = 'Suspicious — Proceed With Caution';
+    verdictSub = 'Some indicators were flagged. Verify before visiting.';
+    recText = `⚠️ <strong>Proceed with caution.</strong> This URL has ${flags.length > 0 ? flags.length + ' concern(s)' : 'some anomalies'} worth investigating. Before clicking, verify the sender's identity through a separate, trusted channel. If this was sent to you unexpectedly, treat it as potentially malicious. Never enter login credentials or personal information unless you are 100% certain of the destination.`;
+  } else {
+    level = 'LIKELY SAFE'; levelClass = 'safe'; icon = '✅';
+    verdictTitle = 'Likely Safe';
+    verdictSub = 'No major threat indicators detected in this URL.';
+    recText = `✅ <strong>This URL appears safe based on our analysis.</strong> No phishing patterns, suspicious structures, or known threat indicators were found. However, no automated tool is a substitute for good judgment — always verify that the destination matches what you expected, especially before entering login credentials or sensitive information.`;
+  }
+
+  let checksHTML = Object.values(checks).map((c, i) => `
+    <div class="check-card" style="animation-delay: ${i * 0.05}s">
+      <div class="check-header">
+        <span class="check-name">${c.label}</span>
+        <span class="check-badge ${c.status}">${
+          c.status === 'pass' ? '✓ PASS' :
+          c.status === 'fail' ? '✗ FAIL' :
+          c.status === 'warn' ? '⚠ WARN' : 'ℹ INFO'
+        }</span>
+      </div>
+      <div class="check-value">${c.value}</div>
+      <div class="check-detail">${c.detail}</div>
+    </div>
+  `).join('');
+
+  let breakdownHTML = '';
+  if (parts) {
+    breakdownHTML = `
+    <div class="breakdown-card">
+      <div class="section-title">URL Structure Breakdown</div>
+      <div class="url-breakdown">
+        ${parts.scheme ? `<span class="url-part scheme">${escHtml(parts.scheme)}</span>` : ''}
+        ${parts.host ? `<span class="url-part host">${escHtml(parts.host)}</span>` : ''}
+        ${parts.path ? `<span class="url-part path">${escHtml(parts.path)}</span>` : ''}
+        ${parts.params ? `<span class="url-part params">${escHtml(parts.params)}</span>` : ''}
+        ${parts.fragment ? `<span class="url-part fragment">${escHtml(parts.fragment)}</span>` : ''}
+      </div>
+      <div class="url-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#0096ff"></div> Protocol</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00e5a0"></div> Domain</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#b0c4d8"></div> Path</div>
+        ${parts.params ? `<div class="legend-item"><div class="legend-dot" style="background:#ffb830"></div> Parameters</div>` : ''}
+        ${parts.fragment ? `<div class="legend-item"><div class="legend-dot" style="background:#a088cc"></div> Fragment</div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  let flagsHTML = '';
+  if (flags.length > 0) {
+    flagsHTML = `
+    <div class="flags-card">
+      <div class="section-title">⚑ Threat Flags (${flags.length} Found)</div>
+      ${flags.map(f => `
+        <div class="flag-item">
+          <span class="flag-icon">${f.icon}</span>
+          <div>
+            <div class="flag-title">${f.title}</div>
+            <div class="flag-desc">${f.desc}</div>
+          </div>
+          <span class="flag-severity ${f.severity}">${f.severity}</span>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  el.innerHTML = `
+    <div class="verdict-banner ${levelClass}">
+      <div class="verdict-icon">${icon}</div>
+      <div>
+        <div class="verdict-title">${verdictTitle}</div>
+        <div class="verdict-sub">${verdictSub}</div>
+      </div>
+      <div class="risk-score-wrap">
+        <div class="risk-score">${riskScore}</div>
+        <div class="risk-label">Risk Score / 100</div>
+      </div>
+    </div>
+    <div class="checks-grid">${checksHTML}</div>
+    ${breakdownHTML}
+    ${flagsHTML}
+    <div class="rec-card ${levelClass}">
+      <div class="section-title">Recommendation</div>
+      <div class="rec-text">${recText}</div>
+    </div>
+  `;
+
+  el.style.display = 'block';
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── SCAN FLOW ────────────────────────────────────────────────────
+async function runScan() {
+  const input = document.getElementById('urlInput').value.trim();
+  if (!input) {
+    document.getElementById('urlInput').focus();
+    document.getElementById('urlInput').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('urlInput').style.borderColor = '', 1000);
+    return;
+  }
+
+  // Show scanning
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('scanningState').style.display = 'block';
+  document.getElementById('scanBtn').disabled = true;
+
+  const steps = ['step1','step2','step3','step4','step5'];
+  for (let i = 0; i < steps.length; i++) {
+    await delay(300);
+    if (i > 0) document.getElementById(steps[i-1]).classList.remove('active');
+    if (i > 0) document.getElementById(steps[i-1]).classList.add('done');
+    document.getElementById(steps[i]).classList.add('active');
+  }
+
+  await delay(400);
+
+  const result = analyseURL(input);
+
+  document.getElementById('scanningState').style.display = 'none';
+  document.getElementById('scanBtn').disabled = false;
+
+  // Reset step classes
+  steps.forEach(s => {
+    document.getElementById(s).classList.remove('active','done');
+  });
+
+  if (result) {
+    renderResults(result);
+  }
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// Enter key support
+document.getElementById('urlInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') runScan();
+});
+</script>
 </body>
 </html>
